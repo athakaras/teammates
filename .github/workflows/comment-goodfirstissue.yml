@@ -17,10 +17,21 @@ jobs:
 
       - name: Add comment
         if: steps.check_label.outputs.is_good_first_issue == 'true'
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const message = ` **Good First Issue - Notes for Contributors**`;
-            const comment = context.issue({ body: message });
-            return github.issues.createComment(comment);
+            const { issue, context } = github;
+            const paragraph = `
+              This is a multiline comment.
+              It can span multiple lines.
+              Write your paragraph here.
+              You can include line breaks and formatting as needed.
+            `;
+            const comment = issue.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: paragraph
+            });
+            return comment;
