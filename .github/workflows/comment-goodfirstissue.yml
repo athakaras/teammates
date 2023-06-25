@@ -21,17 +21,17 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { issue, context } = github;
+            const { context, github } = require('@actions/github');
             const paragraph = `
               This is a multiline comment.
               It can span multiple lines.
               Write your paragraph here.
               You can include line breaks and formatting as needed.
             `;
-            const comment = issue.createComment({
+            const comment = {
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: paragraph
-            });
-            return comment;
+            };
+            await github.issues.createComment(comment);
