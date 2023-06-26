@@ -6,32 +6,17 @@ on:
       - labeled
 
 jobs:
-  comment:
+  add-comment:
+    if: github.event.label.name == 'Good first issue'
     runs-on: ubuntu-latest
-
+    permissions:
+      issues: write
     steps:
-      - name: Check if labeled as "good first issue"
-        id: check_label
-        run: |
-          echo ::set-output name=is_good_first_issue::${{ contains(github.event.issue.labels.*.name, 'good first issue') }}
-
       - name: Add comment
-        if: steps.check_label.outputs.is_good_first_issue == 'true'
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { context, github } = require('@actions/github');
-            const paragraph = `
-              This is a multiline comment.
-              It can span multiple lines.
-              Write your paragraph here.
-              You can include line breaks and formatting as needed.
-            `;
-            const comment = {
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: paragraph
-            };
-            await github.issues.createComment(comment);
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            ### Good first issue - notes for new contributors
+
+            This issue is suited to new contributors because it does not require understanding of the.
